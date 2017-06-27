@@ -2,19 +2,19 @@
 import sys
 from datetime import datetime
 
-def preposessing(lng_min, lat_min, lng_max, lat_max, time_min, time_max, fin, fout):
+def preposessing(ln_min, la_min, ln_max, la_max, time_min, time_max, fin, fout):
     """Filtering out all records outside the bounding box: 
-       [(lng_min, lat_min), (lng_max, lat_max)]
+       [(ln_min, la_min), (ln_max, la_max)]
     """
-    assert(lng_min < lng_max)
-    assert(lat_min < lat_max)
+    assert(ln_min < ln_max)
+    assert(la_min < la_max)
     assert(isinstance(time_min, datetime))
     assert(isinstance(time_max, datetime))
     assert(time_min < time_max)
     
     # 1    * Photo/video identifier 
-    # 2    * User NSID
-    # 4    * Date taken
+    # 2    * User ID
+    # 4    * Timestamp
     # 11   * Longitude
     # 12   * Latitude
     # 13   * Accuracy
@@ -36,20 +36,20 @@ def preposessing(lng_min, lat_min, lng_max, lat_max, time_min, time_max, fin, fo
                 marker = t[22].strip()
                 
                 if len(pid) == 0 or len(uid) == 0 or \
-                   len(time) == 0 or len(lng) == 0 or \
-                   len(lat) == 0 or len(acc) == 0 or \
+                   len(time) == 0 or len(ln) == 0 or \
+                   len(la) == 0 or len(acc) == 0 or \
                    len(url) == 0 or len(marker) == 0: continue
 
-                lng = float(lng)
-                lat = float(lat)
-                if lng < lng_min or lng > lng_max: continue
-                if lat < lat_min or lat > lat_max: continue
+                ln = float(ln)
+                la = float(la)
+                if ln < ln_min or lng > ln_max: continue
+                if la< la_min or la > la_max: continue
 
                 dt = datetime.strptime(time, '%Y-%m-%d %H:%M:%S.%f')
                 if dt < time_min or dt > time_max: continue
 
                 fo.write(pid + ',' + uid + ',' + time + ',' + \
-                         str(lng) + ',' + str(lat) + ',' + \
+                         str(ln) + ',' + str(la) + ',' + \
                          acc + ',' + url + ',' + marker + '\n')
 
 
@@ -60,11 +60,11 @@ if __name__ == '__main__':
 
     fin = sys.argv[1]
     fout = './out.' + fin.split('/')[-1]
-    lng_min = 141.9
-    lng_max = 147.1
-    lat_min = -39.3 
-    lat_max = -35.8 
+    ln_min = 141.9
+    ln_max = 147.1
+    la_min = -39.3 
+    la_max = -35.8 
     time_min = datetime.strptime('2000-12-24 00:00:00', '%Y-%m-%d %H:%M:%S')
     time_max = datetime.strptime('2010-12-24 23:59:59', '%Y-%m-%d %H:%M:%S')
     
-    preposessing(lng_min, lat_min, lng_max, lat_max, time_min, time_max, fin, fout)
+    preposessing(ln_min, la_min, ln_max, la_max, time_min, time_max, fin, fout)
